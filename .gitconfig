@@ -1,0 +1,100 @@
+[user]
+	name = Mario Guhl
+	email = mario.guhl@gmail.com
+[diff]
+    tool = bc4
+[difftool "bc4"]
+    cmd = \"C:\\Program Files\\Beyond Compare 5\\BComp.exe\" \"$LOCAL\" \"$REMOTE\"
+[merge]
+    tool = bc4
+[mergetool "bc4"]
+    cmd = \"C:\\Program Files\\Beyond Compare 5\\BComp.exe\" \"$REMOTE\" \"$LOCAL\" \"$BASE\" \"$MERGED\"
+[alias]
+# List available aliases
+	la = !git config -l | grep alias | cut -c 7-
+	co = checkout
+	cod = checkout develop
+	cop = checkout -
+	upde = fetch origin develop:develop
+	up = !git upde && git stash -u && git rebase origin/develop && git stash pop
+	ec = config --global -e
+	upc = !git pull --rebase --prune $@ && git submodule update --init --recursive
+	cob = checkout -b
+	cobu = "!f() { git checkout -B users/guhlm/$1; }; f"
+	cobud = "!f() { git checkout -B users/guhlm/$1 develop; }; f"
+	cm = !git add -A && git commit -m
+	cme = commit --allow-empty -m
+	cmg = "!start TortoiseGitProc /command:commit /path:."
+	save = !git savem 'SAVEPOINT'
+	savem = !git add -A && git commit -m
+	snap = !git savem 'SNAPSHOT' && git undo
+	wip = !git add -u && git commit -m "WIP"
+	undo = reset HEAD~1 --mixed
+	amend = commit -a --amend
+	amendn = commit -a --amend --no-edit
+	absorb = !C:/tools/git-absorb/git-absorb.exe
+	pu = push
+	upu = !git up && git puf
+	pr = !git upde && git rebase dev && git push && git prc
+	ppr = fetch --prune
+	rs = "!f() { git branch --force $1 origin/$1; }; f"
+	rsd = rs dev
+	prc = "!f() { \
+				commitBranch=$(git rev-parse --abbrev-ref HEAD); \
+				url=\"https://dev.azure.com/{Project}/pullrequestcreate?sourceRef=$commitBranch&targetRef=develop&sourceRepositoryId={sourceId}&targetRepositoryId={targetId}\"; \
+				start $url; }; f"
+	puf = push --force-with-lease
+	amp = !git amendn && git puf
+	cosha = fetch origin
+# does the same as stash but returns exit code 1 if nothing has been stashed
+	stashe = "!f() { \
+				oldsha=$(git rev-parse -q --verify refs/stash); \
+				git stash; \
+				newsha=$(git rev-parse -q --verify refs/stash); \
+				if [ \"$oldsha\" = \"$newsha\" ]; then \
+					exit 1; \
+				else \
+					exit 0; \
+				fi;}; f"
+	wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+	bclean = "!f() { DEFAULT=$(git default); git branch --merged ${1-$DEFAULT} | grep -v " ${1-$DEFAULT}$" | xargs git branch -d; }; f"
+	bdone = "!f() { DEFAULT=$(git default); git checkout ${1-$DEFAULT} && git up && git bclean ${1-$DEFAULT}; }; f"
+# cleans the workspace while making sure that no untracked files are irreversibily cleaned, makes sure that tracked changes stay the same after the command by stashing and popping if there was something stashed before
+# cleans workspace except .vs and ReSharper caches
+	cl = "!f() { git stashe; STASHED=$?; git cm 'CLEAN SAVEPOINT' --allow-empty -q && git undo && git clean -dfx -e _ReSharper.Caches -e .vs; [[ $STASHED -eq 0 ]] && git stash pop -q; git add .; }; f"
+#cleans everything
+	clf = "!f() { git stashe; STASHED=$?; git cm 'CLEAN SAVEPOINT' --allow-empty -q && git undo && git clean -dfx; [[ $STASHED -eq 0 ]] && git stash pop; git add .; }; f"
+
+# List range of commits in human-readable way
+	devnotes = "!f() { if [ ! -z $1 ] && [ ! -z $2 ]; then git log --date=short --stat --pretty='format:[%ad %C(cyan)%aN%Creset] %s %b' --abbrev-commit $1..$2; else echo 'Invalid from/to'; exit 1; fi; }; f"
+	dn = !git devnotes
+	relnotes = "!f() { if [ ! -z $1 ] && [ ! -z $2 ]; then git log --pretty='format:[%C(cyan)%aN%Creset @ %C(yellow)%h%Creset] %s %b' --abbrev-commit $1..$2 --no-merges; else echo 'Invalid from/to'; exit 1; fi; }; f"
+	rn = !git relnotes
+
+# Version tags and log commands
+	lv = "!f() { VERSION_PREFIX=$(git config --get gitflow.prefix.versiontag || echo ''); TAGS_LIST=$(git rev-list --tags=$VERSION_PREFIX'[0-9].[0-9]*' --max-count=1 2>&1); S=$?; if [[ $S = 0 ]]; then git describe --tags $TAGS_LIST; else echo 'No version tags found'; exit 1; fi; }; f"
+	lg = "!start TortoiseGitProc /command:log /limit:\"2000 commits\" /path:."
+	lr = "!start TortoiseGitProc /command:reflog /path:."
+	lp = log --oneline --simplify-by-decoration --graph --all
+	av = !git describe --abbrev=0
+	ll = log --pretty=format:%C(yellow)%h\\ %Cblue[%cn]%Cred%d\\ %Creset%s --decorate --numstat
+	ls = log --pretty=format:%C(yellow)%h\\ %Cblue[%cn]%Cred%d\\ %Creset%s --decorate
+	ld = log --pretty=format:%C(yellow)%h\\ %Cblue[%cn,\\ %ad]%Cred%d\\ %Creset%s --decorate --date=short
+	lc = "!f() { if [ ! -z $1 ] && [ ! -z $2 ]; then git ll $1^..$1; else echo 'Invalid from/to'; exit 1; fi; }; f"
+	diffr = "!f() { if [ ! -z $1 ] && [ ! -z $2 ]; then git diff $1^..$1; else echo 'Invalid from/to'; exit 1; fi; }; f"
+	dr = !git diffr
+	f = !git ls-files | grep -i
+	lasttag = describe --tags --abbrev=0
+	lt = !git lasttag
+	alias = config --get-regexp ^alias\\.
+	# Quote / unquote a sh command, converting it to / from a git alias string
+	quote-string = "!read -r l; printf \\\"!; printf %s \"$l\" | sed 's/\\([\\\"]\\)/\\\\\\1/g'; printf \" #\\\"\\n\" #"
+	quote-string-undo = "!read -r l; printf %s \"$l\" | sed 's/\\\\\\([\\\"]\\)/\\1/g'; printf \"\\n\" #"
+[core]
+	symlinks = true
+	editor = "\"C:\\Program Files\\Notepad++\\notepad++.exe\" -multiInst -notabbar -nosession -noPlugin"
+	autocrlf = false
+[push]
+	autoSetupRemote = true
+[help]
+	autocorrect = 50

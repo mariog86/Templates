@@ -1,0 +1,16 @@
+1.   Install CaskaydiaMonoNerdFontMono-Regular
+2.   Install Powershell --> https://apps.microsoft.com/detail/9mz1snwt0n5d
+2.a) Configure Caskaydia as font for Powershell
+3.   Install oh-my-posh --> winget install JanDeDobbeleer.OhMyPosh -s winget
+4.a) type $profile and remember the path
+4.   Close the Terminal
+5.   Go $profile path and edit or add the file/folder
+6.   Add oh-my-posh --init --shell pwsh --config "C:/path/to/template/jandedobbeleer.omp.json" | Invoke-Expression to the ps1 file
+7.   Powershell promt: Install-Module PSReadLine -AllowPrerelease -Force
+7.a) Powershell promt: Install-Module posh-git -Scope CurrentUser -Force
+8. Add this lines to the $profile: 
+Import-Module PSReadLine
+Import-Module posh-git
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -EditMode Windows

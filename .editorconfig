@@ -1,0 +1,50 @@
+# EditorConfig is awesome: https://editorconfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = crlf
+insert_final_newline = false
+
+[*.omp.json]
+end_of_line = lf
+
+[*.{cs,razor}]
+charset = utf-8
+indent_style = space
+indent_size = 4
+
+
+[*.{xml,props,targets,config}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+[.git*]
+end_of_line = lf
+
+# Code analysis rules
+[*.cs]
+
+# SA1101  Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1309 Field names must not begin with underscore
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1413 Use trailing comma in multi-line initializers
+dotnet_diagnostic.SA1413.severity = none
+
+# message severity for generated code files
+dotnet_diagnostic.CS1591.severity = none
+
+# SA1600 Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
+
+# SA1601 Partial elements should be documented
+dotnet_diagnostic.SA1601.severity = none
+
+# SA1633 File must have header
+dotnet_diagnostic.SA1633.severity = none
