@@ -6,3 +6,8 @@
 4.   Close the Terminal
 5.   Go $profile path and edit or add the file/folder
 6.   Add oh-my-posh --init --shell pwsh --config "C:/path/to/template/jandedobbeleer.omp.json" | Invoke-Expression to the ps1 file
+7. Powershell promt: Install-Module PSReadLine -AllowPrerelease -Force
+8. Add this lines to the $profile: 
+Import-Module PSReadLineSet-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -EditMode Windows
