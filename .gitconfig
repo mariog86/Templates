@@ -7,6 +7,8 @@
     cmd = \"C:\\Program Files\\Beyond Compare 5\\BComp.exe\" \"$LOCAL\" \"$REMOTE\"
 [merge]
     tool = bc4
+[rebase]
+    updateRefs = true
 [mergetool "bc4"]
     cmd = \"C:\\Program Files\\Beyond Compare 5\\BComp.exe\" \"$REMOTE\" \"$LOCAL\" \"$BASE\" \"$MERGED\"
 [alias]
@@ -33,6 +35,13 @@
 	amend = commit -a --amend
 	amendn = commit -a --amend --no-edit
 	absorb = !C:/tools/git-absorb/git-absorb.exe
+	rbb = !git rebase $1
+	rb = !git rebase dev
+	rbi = !git rb -i
+	rbib = !git rbb -i
+	rbri = !git rbi --update-refs
+	rbrib = !git rbib --update-refs
+	rebaser = git rebase $1 --update-refs
 	pu = push
 	upu = !git up && git puf
 	pr = !git upde && git rebase dev && git push && git prc
@@ -56,7 +65,7 @@
 				else \
 					exit 0; \
 				fi;}; f"
-	wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+	wipe = !git add -A && git commit --no-verify -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
 	bclean = "!f() { DEFAULT=$(git default); git branch --merged ${1-$DEFAULT} | grep -v " ${1-$DEFAULT}$" | xargs git branch -d; }; f"
 	bdone = "!f() { DEFAULT=$(git default); git checkout ${1-$DEFAULT} && git up && git bclean ${1-$DEFAULT}; }; f"
 # cleans the workspace while making sure that no untracked files are irreversibily cleaned, makes sure that tracked changes stay the same after the command by stashing and popping if there was something stashed before
